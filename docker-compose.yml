@@ -1,0 +1,91 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: cyberpost_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: cyberpost
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - cyberpost
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  laravel:
+    # image: php:8.4-cli
+    build: ./laravel
+    container_name: cyberpost_laravel
+    restart: unless-stopped
+    working_dir: /var/www/laravel
+    volumes:
+      - ./laravel:/var/www/laravel
+      - ./laravel/docker/php.ini:/usr/local/etc/php/conf.d/uploads.ini
+    ports:
+      - "8000:8000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - cyberpost
+    environment:
+      APP_ENV: docker
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: cyberpost
+      DB_USERNAME: root
+      DB_PASSWORD: root
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/up"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 120s
+
+  nextjs:
+    # image: node:20-alpine
+    build: ./nextjs
+    container_name: cyberpost_nextjs
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ./nextjs:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    depends_on:
+      laravel:
+        condition: service_healthy
+    networks:
+      - cyberpost
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000/api
+      API_URL: http://laravel:8000/api
+      # Used as the base URL for next/image src — must be reachable from the
+      # Next.js container (Docker internal hostname), not from the browser.
+      # next/image serves optimized output via /_next/image so browser never
+      # directly accesses this hostname.
+      NEXT_PUBLIC_STORAGE_URL: http://laravel:8000
+      AUTH_SECRET: K1q4GgYKF+mYxqVGfvTmdJz2BTBenmUQzOAfbudp+n4=
+      AUTH_URL: http://localhost:3000
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 120s
+
+volumes:
+  mysql_data:
+
+networks:
+  cyberpost:
+    driver: bridge

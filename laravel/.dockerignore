@@ -1,0 +1,8 @@
+vendor
+.env
+storage/app/public
+storage/logs
+bootstrap/cache
+.git
+.idea
+*.log
