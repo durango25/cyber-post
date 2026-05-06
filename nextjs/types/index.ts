@@ -3,7 +3,8 @@ export interface Post {
   title: string;
   slug: string;
   content: string;
-  main_image: string | null;
+  image: string | null;
+  image_url: string | null;
   user_id: number;
   author: { id: number; name: string };
   created_at: string;

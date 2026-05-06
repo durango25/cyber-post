@@ -9,14 +9,14 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Loader2 } from "lucide-react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
-const STORAGE_URL = process.env.NEXT_PUBLIC_STORAGE_URL || "http://localhost:8000";
 
 interface PostPreview {
   id: number;
   title: string;
   slug: string;
   content: string;
-  main_image: string | null;
+  image: string | null;
+  image_url: string | null;
   author: { name: string };
   created_at: string;
 }
@@ -87,9 +87,9 @@ export default function LandingPage() {
               >
                 {/* Cover Image */}
                 <figure className="relative h-48 bg-base-300 overflow-hidden">
-                  {post.main_image ? (
+                  {post.image_url ? (
                     <Image
-                      src={`${STORAGE_URL}/storage/${post.main_image}`}
+                      src={post.image_url}
                       alt={post.title}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"

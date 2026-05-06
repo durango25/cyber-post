@@ -20,7 +20,7 @@ interface PostFormProps {
   defaultValues?: Partial<PostFormValues>;
   /** Existing image URL to preview in edit mode */
   currentImageUrl?: string | null;
-  /** Called with FormData containing title, content, and optionally main_image */
+  /** Called with FormData containing title, content, and optionally image */
   onSubmit: (data: FormData) => Promise<void>;
   submitLabel?: string;
   rootError?: string;
@@ -61,7 +61,7 @@ export function PostForm({
     const formData = new FormData();
     formData.append("title", values.title);
     formData.append("content", values.content);
-    if (selectedFile) formData.append("main_image", selectedFile);
+    if (selectedFile) formData.append("image", selectedFile);
     await onSubmit(formData);
   };
 

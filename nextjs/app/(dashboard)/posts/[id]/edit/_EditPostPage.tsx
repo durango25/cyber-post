@@ -10,8 +10,6 @@ import { PostForm } from "@/components/PostForm";
 import type { Post } from "@/types";
 import { ArrowLeft, Loader2 } from "lucide-react";
 
-const STORAGE_URL = process.env.NEXT_PUBLIC_STORAGE_URL || "http://localhost:8000";
-
 export default function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const { data: session } = useSession();
@@ -56,8 +54,8 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
 
   if (!post) return null;
 
-  const currentImageUrl = post.main_image
-    ? `${STORAGE_URL}/storage/${post.main_image}`
+  const currentImageUrl = post.image_url
+    ? post.image_url
     : null;
 
   return (

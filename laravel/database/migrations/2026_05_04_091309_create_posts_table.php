@@ -11,10 +11,11 @@ return new class extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('title');
-            $table->string('slug')->unique();
+            $table->string('title', 255);
+            $table->string('slug', 255)->unique();
             $table->longText('content');
-            $table->string('main_image')->nullable();
+            $table->string('image')->nullable();
+            $table->string('image_caption', 255)->nullable();
             $table->timestamps();
         });
     }

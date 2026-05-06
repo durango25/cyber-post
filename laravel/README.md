@@ -1,6 +1,6 @@
 # CyberPost — Laravel Backend
 
-REST API backend built with Laravel 11 and Sanctum for token-based authentication.
+REST API backend built with Laravel 13 and Sanctum for token-based authentication.
 
 ## Requirements
 

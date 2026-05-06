@@ -95,7 +95,7 @@ See:
 | PUT    | /api/posts/{id} | Update post (owner only)      |
 | DELETE | /api/posts/{id} | Delete post (owner only)      |
 
-**Query params for GET /api/posts:** `page`, `per_page`, `search`, `title`, `content`, `main_image`
+**Query params for GET /api/posts:** `page`, `per_page`, `search`, `title`, `content`, `image`
 
 ## Authentication Flow
 

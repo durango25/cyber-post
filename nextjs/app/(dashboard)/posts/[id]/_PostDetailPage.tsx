@@ -9,7 +9,7 @@ import api from "@/lib/api";
 import type { Post } from "@/types";
 import { ArrowLeft, Pencil, Trash2, Loader2 } from "lucide-react";
 
-const STORAGE_URL = process.env.NEXT_PUBLIC_STORAGE_URL || "http://localhost:8000";
+// const STORAGE_URL = process.env.NEXT_PUBLIC_STORAGE_URL || "http://localhost:8000";
 
 export default function PostDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -60,10 +60,11 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
 
       <div className="card bg-base-100 shadow">
         {/* Cover image */}
-        {post.main_image && (
+        {post.image_url && (
           <figure className="relative w-full h-56 overflow-hidden rounded-t-2xl">
             <Image
-              src={`${STORAGE_URL}/storage/${post.main_image}`}
+              // src={`${STORAGE_URL}/storage/${post.image}`}
+              src={post.image_url}
               alt={post.title}
               fill
               className="object-cover"
