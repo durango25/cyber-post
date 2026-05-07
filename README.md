@@ -124,6 +124,11 @@ Lihat:
 4. Edit atau hapus post milik sendiri
 5. Tampil post di landing
 
+### Akun Testing (Tanpa Register)
+
+- Email: testing@gmail.com
+- Password: Password123-
+
 ## Screenshot Aplikasi
 
 ### 1. Halaman Landing

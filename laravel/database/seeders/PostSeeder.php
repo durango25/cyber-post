@@ -23,7 +23,7 @@ class PostSeeder extends Seeder
         $now = Carbon::now();
         $dir = 'posts';
 
-        for ($i = 1; $i <= 20; $i++) {
+        for ($i = 1; $i <= 30; $i++) {
             $title = 'Post ' . $i . ' ' . $faker->sentence(5);
             $content = collect($faker->paragraphs(5))
                 ->map(fn($para) => "<p>$para</p>")

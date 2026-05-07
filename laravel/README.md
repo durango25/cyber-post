@@ -50,6 +50,12 @@ Saat menggunakan Docker Compose, aplikasi tetap menggunakan file `.env` yang sam
 php artisan migrate
 ```
 
+atau (sekalian seeder dummy)
+
+```bash
+php artisan migrate:fresh --seed
+```
+
 ### Jalankan Server
 
 ```bash

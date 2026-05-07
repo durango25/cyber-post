@@ -28,7 +28,7 @@ class UserSeeder extends Seeder
             'updated_at' => $now,
         ]);
 
-        for ($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= 3; $i++) {
             User::create([
                 'name' => $faker->name(),
                 'email' => $faker->unique()->safeEmail(),
