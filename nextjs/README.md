@@ -21,7 +21,7 @@ Edit `.env.local`:
 
 ```
 NEXT_PUBLIC_API_URL=http://localhost:8000/api
-AUTH_SECRET=rahasia-acak-anda   # buat dengan: openssl rand -base64 32
+AUTH_SECRET=your-secret-key  # buat dengan: openssl rand -base64 32
 AUTH_URL=http://localhost:3000
 ```
 
@@ -36,20 +36,21 @@ Aplikasi berjalan di: http://localhost:3000
 ## Catatan Arsitektur
 
 - **Auth**: NextAuth v5 dengan Credentials provider; strategi JWT; token disimpan di sesi
-- **Proteksi Rute**: `proxy.ts` melindungi semua rute kecuali `/login` dan `/register`
+- **Proteksi Route**: `proxy.ts` melindungi semua route kecuali `/auth/login` dan `/auth/register`
 - **API Client**: Instance Axios di `lib/api.ts` — otomatis menyisipkan Bearer token dari sesi
 - **State**: Zustand `usePostStore` untuk daftar post, paginasi, dan filter
 - **Tema**: next-themes dengan DaisyUI `data-theme`; disimpan di localStorage; default `dark`
 - **SEO**: Next.js `Metadata` API — statis per halaman + async `generateMetadata` untuk detail post
 - **UI**: Komponen DaisyUI v5 (table, card, modal, form, pagination), ikon Lucide React
 
-## Rute Utama
+## Route Utama
 
-| URL                | Deskripsi                               |
-| ------------------ | --------------------------------------- |
-| `/login`           | Halaman login                           |
-| `/register`        | Halaman registrasi                      |
-| `/`                | Daftar post dengan pencarian + paginasi |
-| `/posts/[id]`      | Detail post                             |
-| `/posts/new`       | Buat post baru                          |
-| `/posts/[id]/edit` | Edit post (hanya pemilik)               |
+| URL                            | Deskripsi               |
+| ------------------------------ | ----------------------- |
+| `/`                            | Landing                 |
+| `/auth/login`                  | Halaman login           |
+| `/auth/register`               | Halaman register        |
+| `/dashboard/posts`             | Daftar post             |
+| `/dashboard/posts/create`      | Buat post baru          |
+| `/dashboard/posts/update/[id]` | Edit post (hanya owner) |
+| `/dashboard/posts/detail/[id]` | Detail post             |
