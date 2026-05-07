@@ -123,3 +123,17 @@ Lihat:
 3. Buat post
 4. Edit atau hapus post milik sendiri
 5. Tampil post di landing
+
+## Screenshot Aplikasi
+
+### 1. Halaman Landing
+
+![Halaman Beranda](./nextjs/public/screenshots/landing.png)
+
+### 2. Halaman Login
+
+![Halaman Login](./nextjs/public/screenshots/login.png)
+
+### 3. Halaman Dashboard
+
+![Halaman Login](./nextjs/public/screenshots/dashboard.png)
