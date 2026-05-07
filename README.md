@@ -53,8 +53,7 @@ Laravel:
 
 Next.js:
 
-- NEXT_PUBLIC_API_URL=http://localhost:8000/api
-- API_URL=http://laravel:8000/api
+- NEXT_PUBLIC_API_URL=http://localhost:8000
 
 **2. Jalankan aplikasi:**
 
@@ -65,7 +64,7 @@ docker-compose up -d --build
 > Migrasi database, pembuatan app key, dan storage symlink berjalan otomatis saat pertama kali dijalankan.
 
 - Frontend: http://localhost:3000
-- Backend API: http://localhost:8000/api
+- Backend API: http://localhost:8000
 
 ### Tanpa Docker
 

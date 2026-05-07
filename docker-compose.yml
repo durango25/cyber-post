@@ -67,8 +67,7 @@ services:
     networks:
       - cyberpost
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8000/api
-      API_URL: http://laravel:8000/api
+      NEXT_PUBLIC_API_URL: http://localhost:8000
       # Used as the base URL for next/image src — must be reachable from the
       # Next.js container (Docker internal hostname), not from the browser.
       # next/image serves optimized output via /_next/image so browser never

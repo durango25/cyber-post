@@ -13,7 +13,15 @@ if [ ! -f ".env" ]; then
     cp .env.example .env
 fi
 
-# 3. Jalankan Artisan commands
+# 3. Patch nilai DB di .env dari environment Docker
+sed -i "s|DB_CONNECTION=.*|DB_CONNECTION=${DB_CONNECTION:-mysql}|" .env
+sed -i "s|DB_HOST=.*|DB_HOST=${DB_HOST:-mysql}|" .env
+sed -i "s|DB_PORT=.*|DB_PORT=${DB_PORT:-3306}|" .env
+sed -i "s|DB_DATABASE=.*|DB_DATABASE=${DB_DATABASE:-cyberpost}|" .env
+sed -i "s|DB_USERNAME=.*|DB_USERNAME=${DB_USERNAME:-root}|" .env
+sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=${DB_PASSWORD:-root}|" .env
+
+# 4. Jalankan Artisan commands
 php artisan key:generate --force
 php artisan config:clear
 
@@ -28,6 +36,15 @@ echo "Database siap!"
 # Tambahan: Tunggu database siap (opsional tapi disarankan)
 echo "Menjalankan migrasi..."
 php artisan migrate --force
+
+# Jalankan seeder hanya jika tabel users masih kosong
+USER_COUNT=$(php artisan tinker --execute="echo \App\Models\User::count();" 2>/dev/null | tail -1)
+if [ "$USER_COUNT" = "0" ]; then
+  echo "Menjalankan seeder..."
+  php artisan db:seed --force
+else
+  echo "Data sudah ada (${USER_COUNT} user), seeder dilewati."
+fi
 
 # 4. Link storage (tetap gunakan || true agar tidak stop jika sudah ada)
 php artisan storage:link || true

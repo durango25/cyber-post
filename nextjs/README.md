@@ -20,7 +20,7 @@ cp .env.example .env.local
 Edit `.env.local`:
 
 ```
-NEXT_PUBLIC_API_URL=http://localhost:8000/api
+NEXT_PUBLIC_API_URL=http://localhost:8000
 AUTH_SECRET=your-secret-key  # buat dengan: openssl rand -base64 32
 AUTH_URL=http://localhost:3000
 ```
