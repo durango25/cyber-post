@@ -2,6 +2,8 @@ import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import type { User } from "@/types/auth";
 
+const SERVER_API_URL = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+
 // Error class khusus agar pesan backend bisa diteruskan ke client
 class LoginError extends CredentialsSignin {
   constructor(message: string) {
@@ -36,7 +38,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         try {
           const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"}/api/login`,
+            `${SERVER_API_URL}/api/login`,
             {
               method: "POST",
               headers: {
@@ -121,7 +123,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (token) {
         try {
           await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"}/api/logout`,
+            `${SERVER_API_URL}/api/logout`,
             {
               method: "POST",
               headers: {

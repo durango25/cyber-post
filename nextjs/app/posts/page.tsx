@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 const POSTS_PER_PAGE = 9;
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const API_URL = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 async function getPublicPosts(page: number, search: string): Promise<{
   posts: Post[];

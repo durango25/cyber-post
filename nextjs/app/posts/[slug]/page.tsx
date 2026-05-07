@@ -7,10 +7,12 @@ import type { Post } from "@/types/post";
 import { ArrowLeft, Calendar, User } from "lucide-react";
 import { siteConfig } from "@/config/site";
 
+const API_URL = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+
 async function getPost(slug: string): Promise<Post | null> {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"}/api/public/posts/${slug}`,
+      `${API_URL}/api/public/posts/${slug}`,
       { next: { revalidate: 30 } }
     );
     if (!res.ok) return null;

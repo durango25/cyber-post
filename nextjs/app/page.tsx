@@ -9,10 +9,12 @@ import { siteConfig } from "@/config/site";
 import { BookOpen, ArrowRight, Calendar, User } from "lucide-react";
 import DebugResponse from "@/components/DebugResponse";
 
+const API_URL = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+
 async function getPublicPosts(): Promise<Post[]> {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"}/api/public/post-highlight?limit=6`,
+      `${API_URL}/api/public/post-highlight?limit=6`,
       { next: { revalidate: 30 } }
     );
     if (!res.ok) return [];
