@@ -34,7 +34,14 @@ cyber-post/
 
 ### Dengan Docker (Direkomendasikan)
 
-**1. Siapkan Environment:**
+**1. Clone Repository:**
+
+```bash
+git clone https://github.com/durango25/cyber-post
+cd cyber-post
+```
+
+**2. Siapkan Environment:**
 
 Salin file environment:
 
@@ -55,7 +62,7 @@ Next.js:
 
 - NEXT_PUBLIC_API_URL=http://localhost:8000
 
-**2. Jalankan aplikasi:**
+**3. Jalankan aplikasi:**
 
 ```bash
 docker-compose up -d --build
