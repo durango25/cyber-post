@@ -18,29 +18,20 @@ class AuthController extends Controller
 
     public function act_register(AuthRequest $request): JsonResponse
     {
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
 
-            $user = User::create([
+            User::create([
                 'name'     => $request->name,
                 'email'    => $request->email,
                 'password' => Hash::make($request->password),
             ]);
-
-            $respondWithToken = $this->respondWithToken($user);
 
             DB::commit();
 
             return response()->json([
                 'success' => true,
                 'message' => 'Berhasil melakukan pendaftaran !',
-                'data' => array_merge([
-                    'user' => [
-                        'id' => $user->id,
-                        'name' => $user->name,
-                        'email' => $user->email,
-                    ],
-                ], $respondWithToken)
             ], 201);
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -94,8 +85,8 @@ class AuthController extends Controller
 
     public function act_refresh_token(Request $request): JsonResponse
     {
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
 
             $user = $request->user();
             $respondWithToken = $this->respondWithToken($user);
@@ -117,8 +108,7 @@ class AuthController extends Controller
     // GET RESPON TOKEN USER
     protected function respondWithToken(User $user, bool $remember = false)
     {
-        $expirationMinutes = 60; // 1 hours 
-        // 24 * 60; // 1 days //config('sanctum.expiration');
+        $expirationMinutes = 24 * 60; // 1 days //config('sanctum.expiration');
         if ($remember)
             $expiresAt = null;
         else

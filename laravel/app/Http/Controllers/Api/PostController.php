@@ -122,9 +122,9 @@ class PostController extends Controller
             $image = $request->file('image');
             if ($image) {
                 // Validation tambahan (Pernah kebocoran saat pentest oleh BSSN)
-                $allowedExt = ['jpg', 'jpeg', 'png'];
-                $allowedMime = ['image/jpeg', 'image/png'];
-                $allowedImageType = [IMAGETYPE_PNG, IMAGETYPE_JPEG];
+                $allowedExt = ['jpg', 'jpeg', 'png', 'webp'];
+                $allowedMime = ['image/jpeg', 'image/png', 'image/webp'];
+                $allowedImageType = [IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_WEBP];
                 $imageName = $image->hashName();
 
                 // Validasi extension asli
@@ -209,7 +209,7 @@ class PostController extends Controller
         $imageName = null;
         try {
             if ($request->user()->cannot('update', $post)) {
-                return response()->json(['message' => 'Forbidden'], 403);
+                return response()->json(['message' => 'Forbidden !'], 403);
             }
 
             $imageOld = $post->image;
@@ -217,9 +217,9 @@ class PostController extends Controller
             $image = $request->file('image');
             if ($image) {
                 // Validation tambahan (Pernah kebocoran saat pentest oleh BSSN)
-                $allowedExt = ['jpg', 'jpeg', 'png'];
-                $allowedMime = ['image/jpeg', 'image/png'];
-                $allowedImageType = [IMAGETYPE_PNG, IMAGETYPE_JPEG];
+                $allowedExt = ['jpg', 'jpeg', 'png', 'webp'];
+                $allowedMime = ['image/jpeg', 'image/png', 'image/webp'];
+                $allowedImageType = [IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_WEBP];
                 $imageName = $image->hashName();
 
                 // Validasi extension asli
@@ -295,7 +295,7 @@ class PostController extends Controller
         DB::beginTransaction();
         try {
             if ($request->user()->cannot('delete', $post)) {
-                return response()->json(['message' => 'Forbidden'], 403);
+                return response()->json(['message' => 'Forbidden !'], 403);
             }
 
             $imageOld = $post->image;

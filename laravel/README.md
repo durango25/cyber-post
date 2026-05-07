@@ -1,14 +1,14 @@
 # CyberPost — Laravel Backend
 
-REST API backend built with Laravel 13 and Sanctum for token-based authentication.
+Backend REST API yang dibangun dengan Laravel 13 dan Sanctum untuk autentikasi berbasis token.
 
-## Requirements
+## Kebutuhan
 
 - PHP 8.2+
 - Composer
 - MySQL 8+
 
-## Setup
+## Instalasi
 
 ```bash
 cd laravel
@@ -17,7 +17,7 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-### Configure Database
+### Konfigurasi Database
 
 Edit `.env`:
 
@@ -29,40 +29,40 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-Also set the allowed frontend URL (for CORS):
+Atur juga URL frontend yang diizinkan (untuk CORS):
 
 ```
 FRONTEND_URL=http://localhost:3000
 ```
 
-### Docker Setup
+### Pengaturan Docker
 
-When using Docker Compose, the application still uses the same `.env` file, but certain values are overridden via `docker-compose.yml`.
+Saat menggunakan Docker Compose, aplikasi tetap menggunakan file `.env` yang sama, namun beberapa nilai di-override melalui `docker-compose.yml`.
 
 - DB_HOST=mysql
 - DB_DATABASE=cyberpost
 - DB_USERNAME=root
 - DB_PASSWORD=root
 
-### Run Migrations
+### Jalankan Migrasi
 
 ```bash
 php artisan migrate
 ```
 
-### Start Server
+### Jalankan Server
 
 ```bash
 php artisan serve
 ```
 
-API runs at: http://localhost:8000
+API berjalan di: http://localhost:8000
 
-## Architecture Notes
+## Catatan Arsitektur
 
-- **Auth**: Laravel Sanctum — stateless token-based authentication
-- **CORS**: Configured via `config/cors.php` to allow `FRONTEND_URL`
-- **Authorization**: `PostPolicy` ensures only the post owner can update/delete
-- **Error Handling**: Custom JSON errors in `bootstrap/app.php` (401, 404, 422)
-- **Pagination**: Server-side, 10 items/page, configurable via `per_page` query param
-- **Filtering**: Global `search` (title + content), or column-specific `title` / `content` params
+- **Auth**: Laravel Sanctum — autentikasi berbasis token tanpa state (stateless)
+- **CORS**: Dikonfigurasi via `config/cors.php` untuk mengizinkan `FRONTEND_URL`
+- **Otorisasi**: `PostPolicy` memastikan hanya pemilik post yang bisa mengubah/menghapus
+- **Penanganan Error**: Error JSON kustom di `bootstrap/app.php` (401, 404, 422)
+- **Pagination**: Server side, 10 item/halaman
+- **Filter**: Global `search` (judul + konten)

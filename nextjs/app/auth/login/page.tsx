@@ -1,92 +1,139 @@
 "use client";
 
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
+import { useState } from "react";
+import { LogIn, Eye, EyeOff } from "lucide-react";
+import { loginSchema, type LoginFormData } from "@/schemes/auth";
+import { siteConfig } from "@/config/site";
+import ErrorAlert, { type ErrorPayload } from "@/components/ErrorAlert";
 
 export default function LoginPage() {
-    const router = useRouter();
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<ErrorPayload | null>(null);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError("");
-        setLoading(true);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormData>({ resolver: zodResolver(loginSchema) });
 
-        const result = await signIn("credentials", {
-            email,
-            password,
-            redirect: false,
-        });
+  const onSubmit = async (data: LoginFormData) => {
+    setErrorMessage(null);
+    try {
+      const result = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
 
-        setLoading(false);
-
-        if (result?.error) {
-            setError("Invalid email or password.");
-        } else {
-            router.push("/dashboard");
-            router.refresh();
+      if (result?.error) {
+        const raw = result.code
+          ? decodeURIComponent(result.code)
+          : "Login gagal. Silakan coba lagi.";
+        // Coba parse sebagai JSON (misal: {"email":["..."],"password":["..."]})
+        try {
+          const parsed = JSON.parse(raw);
+          setErrorMessage(parsed);
+        } catch {
+          setErrorMessage(raw);
         }
-    };
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
 
-    return (
-        <div className="card w-full max-w-sm bg-base-100 shadow-xl">
-            <div className="card-body gap-4">
-                <h1 className="card-title text-2xl justify-center">⚡ CyberPost</h1>
-                <p className="text-center opacity-60 text-sm">Sign in to your account</p>
+      router.push("/dashboard/posts");
+      router.refresh();
+    }
+    catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message || 'Login failed. Please try again !');
+      }
+      setErrorMessage('Login failed. Please try again !');
+    }
+  };
 
-                {error && (
-                    <div role="alert" className="alert alert-error text-sm py-2">
-                        {error}
-                    </div>
-                )}
+  return (
+    <div className="flex flex-1 items-center justify-center bg-base-200 py-16 px-4">
+      <div className="card bg-base-100 shadow-md w-full max-w-md">
+        <div className="card-body gap-5">
+          <div className="flex flex-col items-center gap-2 mb-2">
+            <LogIn className="w-8 h-8 text-primary" />
+            <h1 className="text-2xl font-bold">Login ke {siteConfig.short_name}</h1>
+            <p className="text-sm text-base-content/60">
+              Selamat datang ! Silahkan login menggunakan akun Anda.
+            </p>
+          </div>
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-                    <label className="form-control">
-                        <div className="label">
-                            <span className="label-text">Email</span>
-                        </div>
-                        <input
-                            type="email"
-                            className="input input-bordered w-full"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                            autoComplete="email"
-                        />
-                    </label>
+          {errorMessage && (
+            <ErrorAlert error={errorMessage} onClose={() => setErrorMessage(null)} />
+          )}
 
-                    <label className="form-control">
-                        <div className="label">
-                            <span className="label-text">Password</span>
-                        </div>
-                        <input
-                            type="password"
-                            className="input input-bordered w-full"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            autoComplete="current-password"
-                        />
-                    </label>
+          <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-2">
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Email</legend>
+              <input
+                type="email"
+                placeholder="Email"
+                className={`input input-bordered w-full ${errors.email ? "input-error" : ""}`}
+                {...register("email")}
+                autoComplete="email"
+              />
+              {errors.email && (
+                <p className="fieldset-label text-error text-xs mt-1">{errors.email.message}</p>
+              )}
+            </fieldset>
 
-                    <button type="submit" className="btn btn-primary w-full mt-2" disabled={loading}>
-                        {loading ? <Loader2 size={18} className="animate-spin" /> : "Login"}
-                    </button>
-                </form>
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Kata Sandi</legend>
+              <label className="input input-bordered flex items-center gap-2 w-full">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  className="grow"
+                  {...register("password")}
+                  autoComplete="current-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="text-base-content/50 hover:text-base-content"
+                  aria-label="Tampilkan/sembunyikan kata sandi"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </label>
+              {errors.password && (
+                <p className="fieldset-label text-error text-xs mt-1">{errors.password.message}</p>
+              )}
+            </fieldset>
 
-                <p className="text-center text-sm">
-                    Don&apos;t have an account?{" "}
-                    <Link href="/auth/register" className="link link-primary">
-                        Register
-                    </Link>
-                </p>
-            </div>
+            <button
+              type="submit"
+              className="btn btn-primary w-full mt-2"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <span className="loading loading-spinner loading-sm" />
+              ) : (
+                "Login"
+              )}
+            </button>
+          </form>
+
+          <p className="text-center text-sm text-base-content/60">
+            Belum punya akun?{" "}
+            <Link href="/auth/register" className="link link-primary font-medium">
+              Daftar
+            </Link>
+          </p>
         </div>
-    );
+      </div>
+    </div>
+  );
 }
+

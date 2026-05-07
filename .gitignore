@@ -3,3 +3,4 @@
 .vscode/
 .cursor/
 docker-compose.override.yml
+/nextjs-testing

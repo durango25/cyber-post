@@ -79,7 +79,7 @@ return Application::configure(basePath: dirname(__DIR__))
             ], 404);
         });
 
-        // Validation (Already handled by FormRequest, but just in case if there are some validation errors that are not handled by FormRequest)
+        // Validation 
         $exceptions->render(function (ValidationException $e, Request $request) {
             return response()->json([
                 'success' => false,

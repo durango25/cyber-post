@@ -42,7 +42,7 @@ class PostSeeder extends Seeder
                 'title' => $title,
                 'slug' => $slug,
                 'content' => $content,
-                'image' => $imageName,
+                'image' => $imagePath,
                 'created_at' => $now,
                 'updated_at' => $now,
             ]);

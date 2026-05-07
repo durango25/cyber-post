@@ -1,26 +1,31 @@
-import type { Metadata, Viewport } from "next";
-import { cookies } from "next/headers";
+import type { Metadata } from "next";
+// Provider
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { AuthProvider } from "@/components/AuthProvider";
+// Components
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+// Config
+import { geistSans, geistMono } from '@/config/fonts';
+// Styles
 import "./globals.css";
-import { Providers } from "@/app/Providers";
+import { siteConfig } from "@/config/site";
 
 const siteUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "CyberPost",
-    template: "%s — CyberPost"
+    default: siteConfig.site_name,
+    template: `%s — ${siteConfig.site_name}`
   },
-  description: "Technical Tes Programmer 2026 Garuda Cyber",
-  keywords: [
-    'cyber post',
-    'cyber post pekanbaru',
-  ],
-  authors: [{ name: 'Hanggara Bima Pramesti' }],
+  description: siteConfig.description,
+  keywords: siteConfig.keywords.join(", "),
+  authors: [{ name: siteConfig.developer }],
   openGraph: {
     type: "website",
-    siteName: "CyberPost",
-    title: "CyberPost",
-    description: "Technical Tes Programmer 2026 Garuda Cyber",
+    siteName: siteConfig.site_name,
+    title: siteConfig.site_name,
+    description: siteConfig.description,
     url: siteUrl,
     images: [
       {
@@ -28,30 +33,34 @@ export const metadata: Metadata = {
         width: 500,
         height: 500,
         type: "image/png",
-        alt: 'CyberPost'
+        alt: siteConfig.site_name
       },
     ],
   },
 };
 
-export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
-  ],
-};
-
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const cookieStore = await cookies();
-  const theme = cookieStore.get("theme")?.value === "light" ? "light" : "dark";
-
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html lang="id" data-theme={theme} suppressHydrationWarning>
-      <link rel="icon" href="/favicon.ico" sizes="32x32" type="image/ico" />
-      <body className="min-h-screen antialiased">
-        <Providers>{children}</Providers>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+    >
+      <body className="min-h-full flex flex-col">
+        <AuthProvider>
+          <ThemeProvider>
+            <Navbar />
+            <main className="flex-1 flex flex-col">
+              {children}
+            </main>
+            <Footer />
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );
 }
-

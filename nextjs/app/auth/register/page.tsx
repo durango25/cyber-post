@@ -1,108 +1,170 @@
 "use client";
 
-import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import axios from "axios";
-import { Loader2 } from "lucide-react";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+import { useState } from "react";
+import { UserPlus, Eye, EyeOff } from "lucide-react";
+import { signIn } from "next-auth/react";
+import { registerSchema, type RegisterFormData } from "@/schemes/auth";
+import { siteConfig } from "@/config/site";
+import ErrorAlert, { type ErrorPayload } from "@/components/ErrorAlert";
 
 export default function RegisterPage() {
-    const router = useRouter();
-    const [form, setForm] = useState({ name: "", email: "", password: "", password_confirmation: "" });
-    const [errors, setErrors] = useState<Record<string, string[]>>({});
-    const [loading, setLoading] = useState(false);
-    const [globalError, setGlobalError] = useState("");
+  const router = useRouter();
+  const [showPw, setShowPw] = useState(false);
+  const [serverError, setServerError] = useState<ErrorPayload | null>(null);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterFormData>({ resolver: zodResolver(registerSchema) });
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setErrors({});
-        setGlobalError("");
-        setLoading(true);
+  const onSubmit = async (data: RegisterFormData) => {
+    setServerError(null);
+    try {
+      const res = await fetch("/api/proxy/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(data),
+      });
 
-        try {
-            await axios.post(`${API_URL}/register`, form);
+      if (!res.ok) {
+        const json = await res.json();
+        // Tangani 422 (errors object) maupun error message biasa
+        setServerError(json.errors ? { message: json.message, errors: json.errors } : json.message ?? "Pendaftaran gagal.");
+        return;
+      }
 
-            // Auto-login: create NextAuth session with the registered credentials
-            const result = await signIn("credentials", {
-                email: form.email,
-                password: form.password,
-                redirect: false,
-            });
+      // Login otomatis setelah daftar
+      const result = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
 
-            if (result?.ok) {
-                router.push("/dashboard");
-                router.refresh();
-            } else {
-                // Registration succeeded but auto-login failed — redirect to login
-                router.push("/auth/login");
-            }
-        } catch (err) {
-            if (axios.isAxiosError(err) && err.response?.data?.errors) {
-                setErrors(err.response.data.errors);
-            } else {
-                setGlobalError("Registration failed. Please try again.");
-            }
-        } finally {
-            setLoading(false);
-        }
-    };
+      if (result?.error) {
+        router.push("/auth/login");
+        return;
+      }
 
-    return (
-        <div className="card w-full max-w-sm bg-base-100 shadow-xl">
-            <div className="card-body gap-4">
-                <h1 className="card-title text-2xl justify-center">⚡ CyberPost</h1>
-                <p className="text-center opacity-60 text-sm">Create a new account</p>
+      router.push("/dashboard/posts");
+      router.refresh();
+    } catch {
+      setServerError("Terjadi kesalahan jaringan. Coba lagi.");
+    }
+  };
 
-                {globalError && (
-                    <div role="alert" className="alert alert-error text-sm py-2">
-                        {globalError}
-                    </div>
-                )}
+  return (
+    <div className="flex flex-1 items-center justify-center bg-base-200 py-16 px-4">
+      <div className="card bg-base-100 shadow-md w-full max-w-md">
+        <div className="card-body gap-5">
+          <div className="flex flex-col items-center gap-2 mb-2">
+            <UserPlus className="w-8 h-8 text-primary" />
+            <h1 className="text-2xl font-bold">Buat Akun</h1>
+            <p className="text-sm text-base-content/60">
+              Bergabung dengan {siteConfig.short_name} dan mulai menulis.
+            </p>
+          </div>
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-                    {(["name", "email", "password", "password_confirmation"] as const).map((field) => (
-                        <label key={field} className="form-control">
-                            <div className="label">
-                                <span className="label-text capitalize">
-                                    {field === "password_confirmation" ? "Confirm Password" : field}
-                                </span>
-                            </div>
-                            <input
-                                type={field.includes("password") ? "password" : field === "email" ? "email" : "text"}
-                                name={field}
-                                className={`input input-bordered w-full ${errors[field] ? "input-error" : ""}`}
-                                value={form[field]}
-                                onChange={handleChange}
-                                required
-                                autoComplete={field === "password_confirmation" ? "new-password" : field}
-                            />
-                            {errors[field] && (
-                                <div className="label">
-                                    <span className="label-text-alt text-error">{errors[field][0]}</span>
-                                </div>
-                            )}
-                        </label>
-                    ))}
+          {serverError && (
+            <ErrorAlert error={serverError} onClose={() => setServerError(null)} />
+          )}
 
-                    <button type="submit" className="btn btn-primary w-full mt-2" disabled={loading}>
-                        {loading ? <Loader2 size={18} className="animate-spin" /> : "Register"}
-                    </button>
-                </form>
+          <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-2">
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Nama</legend>
+              <input
+                type="text"
+                placeholder="Nama"
+                className={`input input-bordered w-full ${errors.name ? "input-error" : ""}`}
+                {...register("name")}
+                autoComplete="name"
+              />
+              {errors.name && (
+                <p className="fieldset-label text-error text-xs mt-1">{errors.name.message}</p>
+              )}
+            </fieldset>
 
-                <p className="text-center text-sm">
-                    Already have an account?{" "}
-                    <Link href="/auth/login" className="link link-primary">
-                        Login
-                    </Link>
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Email</legend>
+              <input
+                type="email"
+                placeholder="Email"
+                className={`input input-bordered w-full ${errors.email ? "input-error" : ""}`}
+                {...register("email")}
+                autoComplete="email"
+              />
+              {errors.email && (
+                <p className="fieldset-label text-error text-xs mt-1">{errors.email.message}</p>
+              )}
+            </fieldset>
+
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Kata Sandi</legend>
+              <label className="input input-bordered flex items-center gap-2 w-full">
+                <input
+                  type={showPw ? "text" : "password"}
+                  placeholder="Kata sandi"
+                  className="grow"
+                  {...register("password")}
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPw((v) => !v)}
+                  className="text-base-content/50 hover:text-base-content"
+                  aria-label="Tampilkan/sembunyikan kata sandi"
+                >
+                  {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </label>
+              {errors.password && (
+                <p className="fieldset-label text-error text-xs mt-1">{errors.password.message}</p>
+              )}
+            </fieldset>
+
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Konfirmasi Kata Sandi</legend>
+              <input
+                type={showPw ? "text" : "password"}
+                placeholder="Ulangi kata sandi"
+                className={`input input-bordered w-full ${errors.password_confirmation ? "input-error" : ""
+                  }`}
+                {...register("password_confirmation")}
+                autoComplete="new-password"
+              />
+              {errors.password_confirmation && (
+                <p className="fieldset-label text-error text-xs mt-1">
+                  {errors.password_confirmation.message}
                 </p>
-            </div>
+              )}
+            </fieldset>
+
+            <button
+              type="submit"
+              className="btn btn-primary w-full mt-2"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <span className="loading loading-spinner loading-sm" />
+              ) : (
+                "Buat Akun"
+              )}
+            </button>
+          </form>
+
+          <p className="text-center text-sm text-base-content/60">
+            Sudah punya akun?{" "}
+            <Link href="/auth/login" className="link link-primary font-medium">
+              Login
+            </Link>
+          </p>
         </div>
-    );
+      </div>
+    </div>
+  );
 }
+

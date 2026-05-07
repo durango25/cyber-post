@@ -1,13 +1,13 @@
 # CyberPost — Next.js Frontend
 
-Frontend for CyberPost built with Next.js 16 App Router, NextAuth v5, Zustand, DaisyUI v5, and Tailwind CSS v4.
+Frontend untuk CyberPost yang dibangun dengan Next.js 16 App Router, NextAuth v5, Zustand, DaisyUI v5, dan Tailwind CSS v4.
 
-## Requirements
+## Kebutuhan
 
 - Node.js 20+
 - npm
 
-## Setup
+## Instalasi
 
 ```bash
 cd nextjs
@@ -15,41 +15,41 @@ npm install
 cp .env.example .env.local
 ```
 
-### Configure Environment
+### Konfigurasi Environment
 
 Edit `.env.local`:
 
 ```
 NEXT_PUBLIC_API_URL=http://localhost:8000/api
-AUTH_SECRET=your-random-secret-here   # generate with: openssl rand -base64 32
+AUTH_SECRET=rahasia-acak-anda   # buat dengan: openssl rand -base64 32
 AUTH_URL=http://localhost:3000
 ```
 
-### Start Dev Server
+### Jalankan Dev Server
 
 ```bash
 npm run dev
 ```
 
-App runs at: http://localhost:3000
+Aplikasi berjalan di: http://localhost:3000
 
-## Architecture Notes
+## Catatan Arsitektur
 
-- **Auth**: NextAuth v5 with Credentials provider; JWT strategy; token stored in session
-- **Route Protection**: `middleware.ts` protects all routes except `/login` and `/register`
-- **API Client**: Axios instance in `lib/api.ts` — auto-injects Bearer token from session
-- **State**: Zustand `usePostStore` for post list, pagination, and filters
-- **Theme**: next-themes with DaisyUI `data-theme`; persisted to localStorage; defaults to `dark`
-- **SEO**: Next.js `Metadata` API — static per-page + async `generateMetadata` for post detail
-- **UI**: DaisyUI v5 components (table, card, modal, form, pagination), Lucide React icons
+- **Auth**: NextAuth v5 dengan Credentials provider; strategi JWT; token disimpan di sesi
+- **Proteksi Rute**: `proxy.ts` melindungi semua rute kecuali `/login` dan `/register`
+- **API Client**: Instance Axios di `lib/api.ts` — otomatis menyisipkan Bearer token dari sesi
+- **State**: Zustand `usePostStore` untuk daftar post, paginasi, dan filter
+- **Tema**: next-themes dengan DaisyUI `data-theme`; disimpan di localStorage; default `dark`
+- **SEO**: Next.js `Metadata` API — statis per halaman + async `generateMetadata` untuk detail post
+- **UI**: Komponen DaisyUI v5 (table, card, modal, form, pagination), ikon Lucide React
 
-## Key Routes
+## Rute Utama
 
-| URL                | Description                        |
-| ------------------ | ---------------------------------- |
-| `/login`           | Login page                         |
-| `/register`        | Register page                      |
-| `/`                | Post list with search + pagination |
-| `/posts/[id]`      | Post detail                        |
-| `/posts/new`       | Create new post                    |
-| `/posts/[id]/edit` | Edit post (owner only)             |
+| URL                | Deskripsi                               |
+| ------------------ | --------------------------------------- |
+| `/login`           | Halaman login                           |
+| `/register`        | Halaman registrasi                      |
+| `/`                | Daftar post dengan pencarian + paginasi |
+| `/posts/[id]`      | Detail post                             |
+| `/posts/new`       | Buat post baru                          |
+| `/posts/[id]/edit` | Edit post (hanya pemilik)               |

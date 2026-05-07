@@ -1,6 +1,25 @@
 @import "tailwindcss";
 @plugin "daisyui" {
   themes:
-    dark --default,
-    light;
+    light --default,
+    dark;
+}
+@plugin "@tailwindcss/typography";
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Tiptap editor placeholder */
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: oklch(var(--bc) / 0.3);
+  pointer-events: none;
+  height: 0;
 }

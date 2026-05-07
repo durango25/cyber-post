@@ -1,26 +1,26 @@
 # CyberPost
 
-A fullstack monorepo CRUD application built with **Laravel** (REST API) and **Next.js** (App Router).
+Aplikasi CRUD fullstack monorepo yang dibangun dengan **Laravel** (REST API) dan **Next.js** (App Router).
 
-## Features
+## Fitur
 
-- Authentication (Register, Login, Logout, Refresh Token) via Laravel Sanctum
-- Post Management (Create, Read, Update, Delete)
-- Server-side pagination (10 per page) and filtering
-- Owner-only edit/delete authorization
-- Theme switching (Dark / Light)
+- Autentikasi (Register, Login, Logout) via Laravel Sanctum
+- Manajemen Post (CRUD)
+- Pagination dan filter server side (misal 10 per halaman)
+- Otorisasi edit/hapus hanya untuk owner post
+- Tema (Dark / Light)
 
 ## Tech Stack
 
-| Layer    | Technology                                  |
-| -------- | ------------------------------------------- |
-| Backend  | Laravel (PHP), Sanctum (token-based auth)   |
-| Frontend | Next.js 16 App Router, NextAuth v5, Zustand |
-| UI       | DaisyUI v5 + Tailwind CSS v4                |
-| Database | MySQL 8                                     |
-| Icons    | Lucide React                                |
+| Layer    | Teknologi                                     |
+| -------- | --------------------------------------------- |
+| Backend  | Laravel 13 (PHP), Sanctum (autentikasi token) |
+| Frontend | Next.js 16 App Router, NextAuth v5, Zustand   |
+| UI       | DaisyUI v5 + Tailwind CSS v4                  |
+| Database | MySQL 8                                       |
+| Ikon     | Lucide React                                  |
 
-## Project Structure
+## Struktur Proyek
 
 ```
 cyber-post/
@@ -30,20 +30,20 @@ cyber-post/
 └── README.md
 ```
 
-## Quick Start
+## Cara Menjalankan
 
-### With Docker (Recommended)
+### Dengan Docker (Direkomendasikan)
 
-**1. Setup Environment:**
+**1. Siapkan Environment:**
 
-Copy environment file:
+Salin file environment:
 
 ```bash
 cp laravel/.env.example laravel/.env
-cp nextjs/.env.example nextjs/.env
+cp nextjs/.env.example nextjs/.env.local
 ```
 
-#### Environment Variables
+#### Variabel Environment
 
 Laravel:
 
@@ -56,58 +56,64 @@ Next.js:
 - NEXT_PUBLIC_API_URL=http://localhost:8000/api
 - API_URL=http://laravel:8000/api
 
-**2. Start the app:**
+**2. Jalankan aplikasi:**
 
 ```bash
 docker-compose up -d --build
 ```
 
-> Migrations, app key generation, and storage symlink run automatically on first start.
+> Migrasi database, pembuatan app key, dan storage symlink berjalan otomatis saat pertama kali dijalankan.
 
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8000/api
 
-### Without Docker
+### Tanpa Docker
 
-See:
+Lihat:
 
-- [Laravel Setup](./laravel/README.md)
-- [Next.js Setup](./nextjs/README.md)
+- [Panduan Laravel](./laravel/README.md)
+- [Panduan Next.js](./nextjs/README.md)
 
-## API Endpoints
+## Endpoint API
 
-### Authentication
+### Autentikasi
 
-| Method | Endpoint           | Description                   |
-| ------ | ------------------ | ----------------------------- |
-| POST   | /api/register      | Register new user             |
-| POST   | /api/login         | Login, returns token          |
-| POST   | /api/logout        | Logout (auth required)        |
-| POST   | /api/refresh-token | Refresh token (auth required) |
+| Method | Endpoint      | Deskripsi                  |
+| ------ | ------------- | -------------------------- |
+| POST   | /api/register | Daftar pengguna baru       |
+| POST   | /api/login    | Login, mengembalikan token |
+| POST   | /api/logout   | Logout (perlu autentikasi) |
 
-### Posts (all require Bearer token)
+### Post (CRUD perlu Bearer token)
 
-| Method | Endpoint        | Description                   |
-| ------ | --------------- | ----------------------------- |
-| GET    | /api/posts      | List (paginated + filterable) |
-| GET    | /api/posts/{id} | Get single post               |
-| POST   | /api/posts      | Create post                   |
-| PUT    | /api/posts/{id} | Update post (owner only)      |
-| DELETE | /api/posts/{id} | Delete post (owner only)      |
+| Method | Endpoint        | Deskripsi                         |
+| ------ | --------------- | --------------------------------- |
+| GET    | /api/posts      | Daftar post (pagination + filter) |
+| GET    | /api/posts/{id} | Detail per post                   |
+| POST   | /api/posts      | Buat post baru                    |
+| PUT    | /api/posts/{id} | Ubah post (hanya owner)           |
+| DELETE | /api/posts/{id} | Hapus post (hanya owner)          |
 
-**Query params for GET /api/posts:** `page`, `per_page`, `search`, `title`, `content`, `image`
+### Public API
 
-## Authentication Flow
+| Method | Endpoint                   | Description                                    |
+| ------ | -------------------------- | ---------------------------------------------- |
+| GET    | /api/public/post-highlight | List highlight post di landing (misal limit 6) |
+| GET    | /api/public/posts          | Index semua post                               |
+| GET    | /api/public/posts/{slug}   | Detail per post by slug                        |
 
-- User logs in via NextAuth (Credentials Provider)
-- NextAuth calls Laravel `/api/login`
-- Laravel returns API token
-- Token is stored in JWT session
-- All API with auth requests include Bearer token
+## Alur Autentikasi
 
-## Usage
+- Pengguna login via NextAuth (Credentials Provider)
+- NextAuth memanggil endpoint Laravel `/api/login`
+- Laravel mengembalikan API token
+- Token disimpan di sesi JWT
+- Semua request API yang memerlukan autentikasi menyertakan Bearer token
 
-1. Register a new account
+## Cara Penggunaan
+
+1. Daftar akun baru
 2. Login
-3. Create a post
-4. Edit or delete your own posts
+3. Buat post
+4. Edit atau hapus post milik sendiri
+5. Tampil post di landing

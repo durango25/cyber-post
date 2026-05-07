@@ -13,22 +13,16 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
       // Local dev (without Docker): next/image server and Laravel both on localhost
-      // {
-      //   protocol: 'http',
-      //   hostname: '**',
-      //   port: '8000',
-      //   pathname: '/**',
-      // },
       {
         protocol: 'http',
         hostname: 'localhost',
-        port: '8000',
+        port: '',
         pathname: '/**',
       },
       {
         protocol: 'http',
         hostname: 'localhost',
-        port: '',
+        port: '8000',
         pathname: '/**',
       },
       {
